@@ -28,19 +28,34 @@ def normal_chart(df, c, f, chart):
             f_np[h][i] = 1/sigma[h]*np.sqrt(2*pi)*np.exp(-(f_np[h][i]-mu[h])**2/(2*(sigma[h]**2)))
 
     # 출력하기
+    st.markdown('#### 'f'{c}')
+
+    legend = []
+    fig, ax = plt.subplots()
+    ax.set_title('normal ')
+
     print('select chat : ', chart)
     if(chart=='scatter'):
         chart = pd.DataFrame()
         for i in range(4):
             chart[f[i]] = f_np[i]
         st.scatter_chart(chart)
+        
     elif(chart=='line'):
-        fig, ax = plt.subplots()
         for i in range(len(f_np)):
-            ax.plot(f_np[i])
+            ax.plot(f_np[i], alpha=0.7)
+            legend.append(f'{iris.columns[i]}')
+
+        ax.legend(legend)
         st.pyplot(fig)
+
     elif(chart=='hist'):
-        pass
+        for i in range(len(f_np)):
+            ax.hist(f_np[i], alpha=0.7)
+            legend.append(f'{iris.columns[i]}')
+
+        ax.legend(legend)
+        st.pyplot(fig)
     else:
         pass
     
@@ -106,12 +121,10 @@ def main():
         'select a chart type',
         ('scatter','line','hist')
     )
-    st.markdown('#### Setosa')
     # c_list = ['Setosa', 'Versicolor', 'Virginica']
     f_list = ['sepal.length', 'sepal.width','petal.length','petal.width']
     normal_chart(iris_pd, select_class, f_list, select_normal_chart)
-
-    # st.dataframe(iris_pd[iris_pd['variety']==(i for i in c_list)])
+    
 
 if __name__=='__main__':
     main()
