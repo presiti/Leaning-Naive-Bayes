@@ -1,4 +1,4 @@
-import normal_chart as nc
+import normalChart as nc
 
 import streamlit as st
 import pandas as pd
@@ -6,7 +6,7 @@ import pandas as pd
 
 def main():
     print('=============================start stremlit')
-    iris_pd = pd.read_csv("iris.csv")
+    iris_pd = pd.read_csv("dataset/iris.csv")
 
     st.title("IRIS Dataset! :bouquet:")
     # dataset source
@@ -28,6 +28,7 @@ def main():
     st.subheader('iris :violet[class info]', divider='violet')
     iris_class = iris_pd.groupby('variety')['variety'].count()
     st.dataframe(data=iris_class)
+    st.dataframe(data=iris_pd.groupby('variety'))
 
     #show dataset describe
     st.subheader('iris :violet[describe]', divider='violet')
@@ -48,11 +49,17 @@ def main():
     st.latex(r'''
             N(x∣μ,σ^2)≡\frac{1}{σ\sqrt{2π}}\exp[−\frac{(x−μ)^2}{2σ^2}]
             ''')
-    c_list = ['Setosa', 'Versicolor', 'Virginica']
-    f_list = [iris_pd.columns[i] for i in range(4)]
+    c_list = ['Setosa', 'Versicolor', 'Virginica']                          #class name list
+    f_list = [iris_pd.columns[i] for i in range(4)]                         #feature name list
     print('===================출력')
     print(f_list)
     print()
+
+    # select chart type
+    select_chart_type = st.radio(
+        'select a chart type',
+        ('scatter', 'line', 'hist')
+    )
 
     st.markdown('### by Class')
     # select class
@@ -60,13 +67,8 @@ def main():
         'selct a class',
         ('Setosa', 'Versicolor', 'Virginica')
     )
-
-    # select chart type
-    select_normal_chart = st.radio(
-        'select a chart type',
-        (c_list)
-    )
-    nc.by_class(iris_pd, select_class, f_list, select_normal_chart)
+    nc.by_class(iris_pd, select_class, f_list, select_chart_type)
+    
     
 
     st.markdown('### by Feature')
@@ -75,8 +77,7 @@ def main():
         'select a feature',
         (f_list)
     )
-
-    # nc.by_feature(iris_pd, select_feature, c_list, select_normal_chart)
+    nc.by_feature(iris_pd, c_list, select_feature, select_chart_type)
 
     
 

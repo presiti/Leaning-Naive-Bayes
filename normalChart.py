@@ -5,14 +5,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from bokeh.plotting import figure
 
-iris = pd.DataFrame()
-np_list = []         # 표준편차 값 list
-mu = []
-sigma = []
-pi = np.pi      # pie
-
 def by_class(df, c, f, chart):
+    print('---------------------class별로 feature 정규분포 그리기')
     iris = df[df['variety']==c]
+    np_list = []         # 표준편차 값 list
+    mu = []
+    sigma = []
+    pi = np.pi      # pie
 
     # 정규분포 구하기
     for h in range(len(f)): # 4번 반복
@@ -23,7 +22,7 @@ def by_class(df, c, f, chart):
         for i in range(50): # 정규분포
             np_list[h][i] = 1/sigma[h]*np.sqrt(2*pi)*np.exp(-(np_list[h][i]-mu[h])**2/(2*(sigma[h]**2)))
 
-    print('정규분포 완료',np_list[0][0])
+    print('정규분포 계산 완료 :',np_list[0][0])
 
     # 출력하기
     st.markdown('#### 'f'{c}')
@@ -32,32 +31,51 @@ def by_class(df, c, f, chart):
     fig, ax = plt.subplots()
     ax.set_title('normal distribution')
 
-    print('select chat : ', chart)
+    print('그래프 종류 : ', chart)
+    print()
     if(chart=='scatter'):
         chart = pd.DataFrame()
         for i in range(4):
             chart[f[i]] = np_list[i]
-        return st.scatter_chart(chart)
+        st.scatter_chart(chart)
 
     elif(chart=='line'):
-        for i in range(len(np)):
+        for i in range(len(f)):
             ax.plot(np_list[i], alpha=0.7)
             legend.append(f'{iris.columns[i]}')
 
         ax.legend(legend)
-        return st.pyplot(fig)
+        st.pyplot(fig)
 
     elif(chart=='hist'):
-        for i in range(len(np)):
+        for i in range(len(f)):
             ax.hist(np_list[i], alpha=0.7)
             legend.append(f'{iris.columns[i]}')
-
         ax.legend(legend)
-        return st.pyplot(fig)
+        st.pyplot(fig)
     else:
         pass
     # 선택후 출력된 그래프 이미지로 다운로드 할 수 있게 하기
 
 def by_feature(df, c, f, chart):
-    iris.append(df[df['variety']==c[i]] for i in c) 
-    print(iris)
+    print('---------------------feature별로 feature 정규분포 그리기')
+    # 하고 싶은 것
+    # 선택한 feature(column)을 variety별로 나눠서 저장.=> column을 variety로, row를 feature로 변환하여 저장
+
+    # 수행 순서
+    # column이 class인 데이터 프레임 생성 
+    iris = pd.DataFrame({
+        i:[] for i in c
+        })
+    print(iris.head())
+    print()
+    st.dataframe(iris)
+
+    # class 명에 맞는 feature값 채워넣기 => groupbt 수행
+    print(df.groupby('variety')) 
+    
+    np_list = []         # 표준편차 값 list
+    mu = []
+    sigma = []
+    pi = np.pi      # pie
+    
