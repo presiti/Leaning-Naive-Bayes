@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 import normalChart as nc
 
@@ -38,41 +39,29 @@ def dataset_info(iris_pd):
     #show Scatter chart
     st.subheader('iris :blue[scatter chart]', divider='blue')
 
-    st.dataframe(iris_pd)
+    # st.dataframe(iris_pd)
+    iris_np=np.empty(200)
     iris_trans=pd.DataFrame()
 
-    # 테스트1 : 깡
-    iris_temp = iris_pd[iris_pd.variety==c_list[0]]             # 1. 클래스별로 우선 분리
-    # st.dataframe(iris_temp)
+    # 데이터셋 변환_1
+    # 1. 클래스 하나 분리해서 돌리기
+    iris_temp = iris_pd[iris_pd.variety==c_list[0]].transpose()             
+    st.dataframe(iris_temp)
 
-    # 2. 분리 후 특정 행 추출 확인
-    st.dataframe(iris_temp.loc[:, [f_list[0], 'variety']])          
-    # print(type(iris_temp.loc[:, f_list[0]]))                # pandas Series                              
+    # print(type(iris_temp.loc[:, f_list[0]]))                # pandas Series
+    # 2. feture 분리 해서 한 줄로 붙이기
+    for i in range(4):
+        f_np=iris_temp.iloc[i]                                          # feature 분리
+        print(f_list[i],'first value : ', f_np[0])
+        for j in range(50):
+            iris_np[j+i*50] = f_np[j]                                   # 값을 한개씩 빼서 4*50개를 한 줄로 붙이기
+            # 문제점 1. 잘 만들어지는데 소수점 뒤로 숫자가 없으면 1.0이 1로 들어감.
+            # 해결방법 : type 출력해보기
     
-    # 3. 분리 후 각 feature 한 줄 넣기
-    iris_trans[c_list[0]] = iris_temp.loc[:, f_list[0]]
+    # 3. data farme으로 만들어 주기
+    iris_trans[c_list[0]] = iris_np
     st.dataframe(iris_trans)
 
-    iris_trans=pd.DataFrame()
-
-    # 4. class별로 다 넣기
-    # 그냥 넣기
-    for i in range(3):
-        iris_temp = iris_pd[iris_pd.variety==c_list[i]]
-        iris_trans[c_list[i]] = [(iris_temp.loc[:, f_list[j]].to_numpy()) for j in range(4)]
-    st.dataframe(iris_trans)
-
-    iris_trans['feature']=f_list                              # 4. feature 행 추가하기
-    st.dataframe(iris_trans)
-
-    # 테스트1-2:concat, axis 써보기
-    # st.scatter_chart(iris_trans)
-
-    st.subheader('transpose')
-    # 테스트2 : transpose()         
-    iris_temp=st.dataframe(iris_pd.transpose())                 # 1. .transpos()로 행열 바꾸기
-
-    
     # show Normal Distribution
     st.subheader('iris :blue[normal distribution]', divider='blue')
 
