@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from bokeh.plotting import figure
+# from bokeh.plotting import figure
 
 class normal_chart:
     def __init__(self, df, df_trans):

@@ -1,13 +1,13 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-
-import datasetInfo as di
-import naiveBayes as nb
 from PIL import Image
 
+from DatasetINFO import datasetInfo as di
+from NaiveBayes import naiveBayes as nb
+
+
 fi = Image.open("image/iris.png")
-ml = Image.open("image/classification.png")
 def main():
     print('=============================start stremlit')
     st.set_page_config(
@@ -17,12 +17,13 @@ def main():
 
     st.title("IRIS Dataset! :bouquet:")
     # st.image('image/iris.png', width=50)
+    print('read datset --------------------------')
     iris_pd = pd.read_csv("dataset/iris.csv")
 
     with st.sidebar:
         select_menu=option_menu(
             "Menu",
-            ("dataset INFO", "Naive Bayes"),        # menu name
+            ("Dataset INFO", "Naive Bayes"),        # menu name
             icons=["bookmark", "diagram-2"],    
             menu_icon="list", 
             default_index=0,
@@ -33,9 +34,8 @@ def main():
                 "nav-link-selected":{"color":"black","background-color":"#ece1fc "}
             }
         )
-
-    # linked menu
-    if(select_menu=="dataset INFO"):
+    
+    if(select_menu=="Dataset INFO"):
         di.dataset_info(iris_pd)                    
     elif(select_menu=="Naive Bayes"):
         nb.naive_bayes(iris_pd)
