@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from decimal import Decimal, ROUND_HALF_UP
 
 import normalChart as nc
 
@@ -54,12 +55,25 @@ def dataset_info(iris_pd):
         f_np=iris_temp.iloc[i]                                          # feature 분리
         print(f_list[i],'first value : ', f_np[0])
         for j in range(50):
-            iris_np[j+i*50] = f_np[j]                                   # 값을 한개씩 빼서 4*50개를 한 줄로 붙이기
-            # 문제점 1. 잘 만들어지는데 소수점 뒤로 숫자가 없으면 1.0이 1로 들어감.
-            # 해결방법 : type 출력해보기
+            # decimal_value = Decimal().quantize(Decimal('1.00'), rounding=ROUND_HALF_UP)
+            iris_np[j+i*50] = f_np[j]                                 # 값을 한개씩 빼서 4*50개를 한 줄로 붙이기
+            
+            # 문제점 잘 만들어지는데 소수점 뒤로 숫자가 없으면 1.0이 1로 들어감.
+            # 시도1 :decimal 사용 -> 실패
     
     # 3. data farme으로 만들어 주기
     iris_trans[c_list[0]] = iris_np
+    st.markdown("hello?")
+    st.dataframe(iris_trans)
+
+    # 4. feature 열 추가해주기
+    iris_f = list()
+    for i in range(4):
+        for j in range(50):
+            iris_f.append(f_list[i])
+        print(iris_f[i*50])
+    
+    iris_trans['feature']=iris_f
     st.dataframe(iris_trans)
 
     # show Normal Distribution

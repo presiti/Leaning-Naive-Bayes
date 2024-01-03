@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 from bokeh.plotting import figure
 
 class normal_chart:
-    def __init__(self, df):
+    def __init__(self, df, df_trans):
         self.df = df
+        self.df_trans = df_trans
         self.pi = np.pi      # pie
 
     def by_class(self, c, f, chart):
