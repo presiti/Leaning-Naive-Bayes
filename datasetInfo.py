@@ -40,41 +40,54 @@ def dataset_info(iris_pd):
     #show Scatter chart
     st.subheader('iris :blue[scatter chart]', divider='blue')
 
-    # st.dataframe(iris_pd)
-    iris_np=np.empty(200)
     iris_trans=pd.DataFrame()
 
-    # 데이터셋 변환_1
-    # 1. 클래스 하나 분리해서 돌리기
-    iris_temp = iris_pd[iris_pd.variety==c_list[0]].transpose()             
-    st.dataframe(iris_temp)
-
-    # print(type(iris_temp.loc[:, f_list[0]]))                # pandas Series
-    # 2. feture 분리 해서 한 줄로 붙이기
-    for i in range(4):
-        f_np=iris_temp.iloc[i]                                          # feature 분리
-        print(f_list[i],'first value : ', f_np[0])
-        for j in range(50):
-            # decimal_value = Decimal().quantize(Decimal('1.00'), rounding=ROUND_HALF_UP)
-            iris_np[j+i*50] = f_np[j]                                 # 값을 한개씩 빼서 4*50개를 한 줄로 붙이기
-            
-            # 문제점 잘 만들어지는데 소수점 뒤로 숫자가 없으면 1.0이 1로 들어감.
-            # 시도1 :decimal 사용 -> 실패
-    
-    # 3. data farme으로 만들어 주기
-    iris_trans[c_list[0]] = iris_np
-    st.markdown("hello?")
-    st.dataframe(iris_trans)
-
-    # 4. feature 열 추가해주기
-    iris_f = list()
-    for i in range(4):
-        for j in range(50):
-            iris_f.append(f_list[i])
-        print(iris_f[i*50])
-    
+    # 데이터셋 변환
+    print('transpose dataset-------------------------')
+    print('> transpose dataset \n')
+    for i in range(3):              # 0~2, class 수만큼 돌기
+        print('transpose :', c_list[i])
+        iris_temp = iris_pd[iris_pd.variety==c_list[i]].transpose()     # 1. class별로 떼어와서 transpose로 행과 열을 바꾸기
+        iris_np=np.empty(200)                                           # class별 데이터를 담을 numpy 리스트
+        
+        for j in range(4):          # 0~3, feature 수만큼 돌기
+            f_np=iris_temp.iloc[j].to_numpy()                                      # 2. feature 4개를 한 줄씩 떼오기
+            print(f_list[j], ' first value : ', f_np[0])
+            for k in range(50):
+                iris_np[k+j*50]=f_np[k]                                 # 3. 값을 하나씩 꺼내어 넣어 clsas별 numpy 리스트로 만들기
+        iris_trans[c_list[i]]=iris_np                                   # 4. 데이터 프레임에 컬럼명을 class명으로 정하여 numpy리스트 넣기
+        print(c_list[i], 'done\n')
+    print('> add feature column')
+    iris_f=list()                                                       # feature 열 값을 담을 리스트
+    for j in range(4):
+        for k in range(50):
+            iris_f.append(f_list[j])                                    # 5. feature열에 넣을 feature 이름 리스트 생성하기
+        print('featrue name : ',iris_f[j*50])                           # feature 이름이 바뀌는 지점 값 출력해서 잘 들어가고 있는지 확인
     iris_trans['feature']=iris_f
-    st.dataframe(iris_trans)
+    # st.dataframe(iris_trans)
+
+    s1, s2= st.columns([0.5,0.5])
+    s1.markdown('##### 'f'{f_list[0]}')
+    s1.scatter_chart(
+                data=iris_trans[iris_trans['feature']==f_list[0]].loc[:, c_list], 
+                size=50
+            )
+    s2.markdown('##### 'f'{f_list[1]}')
+    s2.scatter_chart(
+                data=iris_trans[iris_trans['feature']==f_list[1]].loc[:, c_list], 
+                size=50
+            )
+    s1.markdown('##### 'f'{f_list[2]}')
+    s1.scatter_chart(
+                data=iris_trans[iris_trans['feature']==f_list[2]].loc[:, c_list], 
+                size=50
+            )
+    s2.markdown('##### 'f'{f_list[3]}')
+    s2.scatter_chart(
+                data=iris_trans[iris_trans['feature']==f_list[3]].loc[:, c_list], 
+                size=50
+            )
+    # st.scatter_chart(iris_trans)
 
     # show Normal Distribution
     st.subheader('iris :blue[normal distribution]', divider='blue')
@@ -89,7 +102,7 @@ def dataset_info(iris_pd):
         'select a chart type',
         ('scatter', 'line', 'hist')
     )
-    norm = nc.normal_chart(iris_pd)
+    norm = nc.normal_chart(iris_pd, iris_trans)
 
 
     st.markdown('### by Class')
@@ -106,4 +119,4 @@ def dataset_info(iris_pd):
         'select a feature',
         (f_list)
     )
-    # norm.by_feature(c_list, select_feature, select_chart_type)
+    norm.by_feature(c_list, select_feature, select_chart_type)

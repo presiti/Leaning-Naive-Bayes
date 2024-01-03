@@ -22,8 +22,8 @@ def main():
     with st.sidebar:
         select_menu=option_menu(
             "Menu",
-            ("dataset INFO", "Naive Bayes"),
-            icons=["bookmark", "diagram-2"],
+            ("dataset INFO", "Naive Bayes"),        # menu name
+            icons=["bookmark", "diagram-2"],    
             menu_icon="list", 
             default_index=0,
             styles={
@@ -34,8 +34,9 @@ def main():
             }
         )
 
+    # linked menu
     if(select_menu=="dataset INFO"):
-        di.dataset_info(iris_pd)
+        di.dataset_info(iris_pd)                    
     elif(select_menu=="Naive Bayes"):
         nb.naive_bayes(iris_pd)
 
