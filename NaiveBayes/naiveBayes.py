@@ -143,6 +143,7 @@ def naive_bayes(iris_pd):
 
     print("variety of Maximum Posterior values")
     print(posteriorVariety)
+    print()
 
     # Accuarcy
     similar=0
