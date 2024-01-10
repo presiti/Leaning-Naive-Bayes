@@ -6,37 +6,44 @@ from collections import Counter
 import math
 from scipy.stats import norm
 import matplotlib as plt
-
 from scipy.special import comb
+from stqdm import stqdm
+from time import sleep
 
+from sklearn.metrics import f1_score
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 from DatasetINFO.transposeDataset import transpose as ts
 
 def naive_bayes(iris_pd):
     print('start naive bayes ---------------------------------')
-    st.header("Naive Bayes")
-    st.dataframe(iris_pd)
+    st.header("Naive Bayes with IRIS")
+    st.subheader("Split Dataset :scissors:", divider='blue')
 
     # split train, test
     variety=iris_pd.variety
-    data=iris_pd.drop(columns='variety')
-    st.dataframe(data)
+    data=iris_pd.drop(columns='variety')    # 순수 데이터값만 출력
 
-    iris_pd['category']=iris_pd['variety'].factorize()[0]
+    iris_pd['category']=iris_pd['variety'].factorize()[0]   # class를 .factorize()[0]로 숫자로 치환하여 'category' 컬럼에 추가
     category=iris_pd['category']
-    st.dataframe(iris_pd)
 
+    st.markdown("#### 데이터셋 분할")
+    st.markdown("분할한 train 데이터셋")
     data_train, data_test, variety_train, variety_test=train_test_split(
         data, category, test_size=0.2, stratify=category, random_state=1
         )
-    print('variety bincount : ',np.bincount(variety_train))
+    st.dataframe(data_train)
+    print('variety bincount : ',np.bincount(variety_train))     # 빈도수 세기
     newIris=pd.DataFrame(np.column_stack([data_train, variety_train]))
 
+    st.markdown("분할한 데이터셋을 클래스 순서로 정렬")
     # sort and rearrange the data based on the variety
     setosa=newIris[newIris[4]==0]
     versicolor=newIris[newIris[4]==1]
     virginica=newIris[newIris[4]==2]
     newIris=pd.concat([setosa, versicolor, virginica])
+    st.dataframe(newIris)
 
     # split data based on variety
     setosa_data=newIris[0:40]
@@ -53,12 +60,15 @@ def naive_bayes(iris_pd):
     versicolor_std=versicolor_data.std()
     virginica_std=virginica_data.std()
 
-    # find Likelihood
+
+    # 학습 데이터 셋에서 우도 찾기
+    st.markdown('train likeilhood')
     print('finding train likelihood')
     x=[]
     likelihood=[]
 
-    for i in range(len(newIris)):
+    for i in stqdm(range(len(newIris))):        # stqdm 완전 끝나면 로딩바 자체가 사라짐
+        # sleep(0.5)
         distribution=1
         if(i<40):                               #setosa
             mean=setosa_mean
@@ -70,17 +80,17 @@ def naive_bayes(iris_pd):
             mean=virginica_mean
             std=virginica_std
         
-        for j in range(4):
+        for j in range(4):  # 우도 구하기
             x = newIris.iloc[i]
             a = ((x[j]-mean[j])**2)/(2*std[j]**2)
             b = math.sqrt(2*math.pi*(std[j]**2))
             y = math.exp(-a)/b
             distribution=distribution*y
-        likelihood.append(distribution)
+        likelihood.append(distribution) # 우도 값 넣기
         x=[]
     st.dataframe(likelihood)
 
-    # find priori probability
+    # find priori probability = 사전확률. 해당 클래스일 확률. 50/150
     setosa_priori = len(setosa_data)/len(newIris)
     versicolor_priori = len(versicolor_data)/len(newIris)
     virginica_priori = len(virginica_data)/len(newIris)
@@ -90,17 +100,20 @@ def naive_bayes(iris_pd):
     print('virginica_priori :', virginica_priori)
     print()
 
+
     # rearrange the data into groups based on the variety
+    print('test_data start-------------------------------')
     newTest = pd.DataFrame(np.column_stack([data_test, variety_test]))
     setosa=newTest[newTest[4]==0]
     versicolor=newTest[newTest[4]==1]
     virginica=newTest[newTest[4]==2]
     newTest=pd.concat([setosa, versicolor, virginica])
+    st.dataframe(newTest)
     
-    # find likelihood for test data
+    # test데이터셋에서 우도 찾기
     print('finding test likelihood')
-    testLikelihood=[]
     x=[]
+    testLikelihood=[]
     testPosterior=[]
     posteriorVariety=[]
 
@@ -128,14 +141,17 @@ def naive_bayes(iris_pd):
                 distribution=distribution*y
             x=[]
             testLikelihood.append(distribution)
-            posterior=testLikelihood[c]*priori          # Calculate poterior values
+            posterior=testLikelihood[c]*priori          # Calculate poterior values = 사후확률 계산
             testPosterior.append(posterior)
             maxPosterior=testPosterior.index(max(testPosterior))
         posteriorVariety.append(maxPosterior)
 
         testLikelihood=[]
         testPosterior=[]
-    
+    st.markdown('Naive Bayes로 예측한 클래스')
+    posterior_df=pd.DataFrame({'posterior':posteriorVariety})
+    st.dataframe(posterior_df.groupby('posterior')['posterior'].count())
+
     # check the differences
     print("variety of original test data")
     variety_test=list(map(int, newTest[4]))
@@ -158,3 +174,14 @@ def naive_bayes(iris_pd):
     # for i in range(len(posteriorVariety)):
     #     ax.plot(variety_test[i])
     #     ax.plot(posteriorVariety[i])
+
+    cm = confusion_matrix(posteriorVariety, variety_test)
+    print('confusion matrix')
+    print(cm)
+    plot = sns.heatmap(
+        cm, 
+        annot=True, # 히트맵 각 항목의 숫자 표시 여부
+        cmap='BuPu' # 색 테마 선택
+    )
+    plot.set(xlabel="test", ylabel="true")
+    st.pyplot(plot.get_figure())

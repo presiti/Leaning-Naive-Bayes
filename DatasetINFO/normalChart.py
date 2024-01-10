@@ -11,7 +11,7 @@ class normal_chart:
         self.df_trans = df_trans
         self.pi = np.pi      # pie
 
-    def by_class(self, c, f, chart):
+    def by_class(self, c, f):
         print('--------------------- class별로 feature 정규분포 그리기')
         iris = self.df[self.df.variety==c]                          # 1. 선택된 class 데이터만 분리하기
         np_list = []                                                # 표준편차 값 리스트
@@ -32,34 +32,35 @@ class normal_chart:
         # 출력하기
         st.markdown('#### 'f'{c}')
 
-        legend = []
-        fig, ax = plt.subplots()
-        ax.set_title('normal distribution')
+        # legend = []
+        # fig, ax = plt.subplots()
+        # ax.set_title('normal distribution')
 
-        print('그래프 종류 : ', chart)
-        print()
-        if(chart=='scatter'):
-            chart = pd.DataFrame()
-            for i in range(4):
-                chart[f[i]] = np_list[i]
-            st.scatter_chart(chart)
+        # print('그래프 종류 : ', chart)
+        # print()
+        # if(chart=='scatter'):
+        #     chart = pd.DataFrame()
+        #     for i in range(4):
+        #         chart[f[i]] = np_list[i]
+        #     st.scatter_chart(chart)
 
-        elif(chart=='line'):
-            for i in range(4):
-                ax.plot(np_list[i], alpha=0.7)
-                legend.append(f'{iris.columns[i]}')
+        # elif(chart=='line'):
+        #     for i in range(4):
+        #         ax.plot(np_list[i], alpha=0.7)
+        #         legend.append(f[i])
 
-            ax.legend(legend)
-            st.pyplot(fig)
+        #     ax.legend(legend)
+        #     st.pyplot(fig)
 
-        elif(chart=='hist'):
-            for i in range(4):
-                ax.hist(np_list[i], alpha=0.7)
-                legend.append(f'{iris.columns[i]}')
-            ax.legend(legend)
-            st.pyplot(fig)
-        else:
-            pass
+        # elif(chart=='hist'):
+        #     for i in range(4):
+        #         ax.hist(np_list[i], alpha=0.7)
+        #         legend.append(f'{iris.columns[i]}')
+        #     ax.legend(legend)
+        #     st.pyplot(fig)
+        # else:
+        #     pass
+        return np_list
 
     def by_feature(self, c, f, chart):
         print('--------------------- feature별로 feature 정규분포 그리기')
@@ -105,6 +106,43 @@ class normal_chart:
             for i in range(3):
                 ax.hist(np_list[i], alpha=0.7)
                 legend.append(f'{iris.columns[i]}')
+            ax.legend(legend)
+            st.pyplot(fig)
+        else:
+            pass
+    
+    def show_chart(data_type, norm, c, f, chart):
+        len=0
+        x_name=[]
+        legend = []
+        fig, ax = plt.subplots()
+        ax.set_title('normal distribution')
+        print('그래프 종류 : ', chart,'\n')
+        if(data_type=='class'): 
+            len=len(f)
+            x_name=f
+        if(data_type=='feature'): 
+            len=len(c)
+            x_name=c
+        
+        if(chart=='scatter'):
+            chart = pd.DataFrame()
+            for i in range(4):
+                chart[f[i]] = norm[i]
+            st.scatter_chart(chart)
+
+        elif(chart=='line'):
+            for i in range(4):
+                ax.plot(norm[i], alpha=0.7)
+                legend.append(x_name[i])
+
+            ax.legend(legend)
+            st.pyplot(fig)
+
+        elif(chart=='hist'):
+            for i in range(4):
+                ax.hist(norm[i], alpha=0.7)
+                legend.append(x_name[i])
             ax.legend(legend)
             st.pyplot(fig)
         else:

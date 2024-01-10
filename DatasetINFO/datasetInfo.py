@@ -101,9 +101,16 @@ def dataset_info(iris_pd):
         'selct a class',
         ('Setosa', 'Versicolor', 'Virginica')
     )
-    norm.by_class(select_class, f_list, select_chart_type)
+    np_data = norm.by_class(select_class, f_list)
+    norm.show_chart(
+        'class', 
+        np_data, 
+        select_class, 
+        f_list, 
+        select_chart_type
+        )
 
-    st.markdown('### by Feature')
+    st.markdown('### by Feature')   
     #select Feature
     select_feature = st.selectbox(
         'select a feature',
