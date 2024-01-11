@@ -111,17 +111,19 @@ class normal_chart:
         else:
             pass
     
-    def show_chart(data_type, norm, c, f, chart):
+    def show_chart(self, data_by, norm, c, f, chart):
+        print('chart start----------------')
+        print(self, '\n')
         len=0
         x_name=[]
         legend = []
         fig, ax = plt.subplots()
         ax.set_title('normal distribution')
         print('그래프 종류 : ', chart,'\n')
-        if(data_type=='class'): 
+        if(data_by=='class'): 
             len=len(f)
             x_name=f
-        if(data_type=='feature'): 
+        if(data_by=='feature'): 
             len=len(c)
             x_name=c
         

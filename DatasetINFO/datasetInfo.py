@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 # from decimal import Decimal, ROUND_HALF_UP
 
 import DatasetINFO.normalChart as nc
@@ -45,6 +46,7 @@ def dataset_info(iris_pd):
 
     # 데이터셋 변환
     iris_trans=td.transpose(iris_pd, c_list, f_list)
+    st.dataframe(iris_trans)
     
     scatter_1 = st.toggle('show sactter version 1')
     if scatter_1:
@@ -70,14 +72,22 @@ def dataset_info(iris_pd):
                     size=50
                 )
     
+    st.markdown('### sepal')
+    setosa = iris_pd[iris_pd['variety']=='Setosa']
+    versicolor = iris_pd[iris_pd['variety']=='Versicolor']
+    virginica = iris_pd[iris_pd['variety']=='Virginica']
+    fig, (ax1, ax2) = plt.subplots(1,2)
+    ax1.scatter(setosa['sepal.width'],setosa['sepal.length'])
+    ax1.scatter(versicolor['sepal.width'],versicolor['sepal.length'])
+    ax1.scatter(virginica['sepal.width'],virginica['sepal.length'])
+    # st.pyplot(fig)
 
-    # chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
-    # st.dataframe(chart_data)
-    st.scatter_chart(
-            data=iris_pd,
-            x=f_list[1],
-            y=f_list[0]
-        )
+    st.markdown('### petal')
+    # fig, ax = plt.subplots()
+    ax2.scatter(setosa['petal.width'],setosa['petal.length'])
+    ax2.scatter(versicolor['petal.width'],versicolor['petal.length'])
+    ax2.scatter(virginica['petal.width'],virginica['petal.length'])
+    st.pyplot(fig)
 
     # show Normal Distribution
     st.subheader('iris :blue[normal distribution]', divider='blue')
