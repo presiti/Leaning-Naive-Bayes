@@ -30,39 +30,9 @@ class normal_chart:
         print('정규분포 계산 완료 / sample :',np_list[0][0])
 
         # 출력하기
-        st.markdown('#### 'f'{c}')
+        return np_list  # 그래프 출력을 위한 정규분포값 반환
 
-        # legend = []
-        # fig, ax = plt.subplots()
-        # ax.set_title('normal distribution')
-
-        # print('그래프 종류 : ', chart)
-        # print()
-        # if(chart=='scatter'):
-        #     chart = pd.DataFrame()
-        #     for i in range(4):
-        #         chart[f[i]] = np_list[i]
-        #     st.scatter_chart(chart)
-
-        # elif(chart=='line'):
-        #     for i in range(4):
-        #         ax.plot(np_list[i], alpha=0.7)
-        #         legend.append(f[i])
-
-        #     ax.legend(legend)
-        #     st.pyplot(fig)
-
-        # elif(chart=='hist'):
-        #     for i in range(4):
-        #         ax.hist(np_list[i], alpha=0.7)
-        #         legend.append(f'{iris.columns[i]}')
-        #     ax.legend(legend)
-        #     st.pyplot(fig)
-        # else:
-        #     pass
-        return np_list
-
-    def by_feature(self, c, f, chart):
+    def by_feature(self, c, f):
         print('--------------------- feature별로 feature 정규분포 그리기')
         iris = self.df_trans[self.df_trans.feature==f]              # 1. 선택된 feature 데이터 분리
         np_list = []                                                # 표준편차 값 list
@@ -79,73 +49,45 @@ class normal_chart:
 
         print('정규분포 계산 완료 / sample :', np_list[0][0])
 
-        # 출력하기
-        st.markdown('#### 'f'{f}')
-
-        legend = []
-        fig, ax = plt.subplots()
-        ax.set_title('normal distribution')
-
-        print('그래프 종류 : ', chart)
-        print()
-        if(chart=='scatter'):
-            chart = pd.DataFrame()
-            for i in range(3):
-                chart[c[i]] = np_list[i]
-            st.scatter_chart(chart)
-
-        elif(chart=='line'):
-            for i in range(3):
-                ax.plot(np_list[i], alpha=0.7)
-                legend.append(f'{iris.columns[i]}')
-
-            ax.legend(legend)
-            st.pyplot(fig)
-
-        elif(chart=='hist'):
-            for i in range(3):
-                ax.hist(np_list[i], alpha=0.7)
-                legend.append(f'{iris.columns[i]}')
-            ax.legend(legend)
-            st.pyplot(fig)
-        else:
-            pass
+        return np_list
     
     def show_chart(self, data_by, norm, c, f, chart):
         print('chart start----------------')
-        print(self, '\n')
-        len=0
+        length=0
         x_name=[]
         legend = []
         fig, ax = plt.subplots()
         ax.set_title('normal distribution')
         print('그래프 종류 : ', chart,'\n')
+        print(len(f))
         if(data_by=='class'): 
-            len=len(f)
+            st.markdown('#### 'f'{c}')
+            length=len(f)
             x_name=f
         if(data_by=='feature'): 
-            len=len(c)
+            length=len(c)
             x_name=c
         
         if(chart=='scatter'):
             chart = pd.DataFrame()
-            for i in range(4):
+            for i in range(length):
                 chart[f[i]] = norm[i]
             st.scatter_chart(chart)
 
         elif(chart=='line'):
-            for i in range(4):
+            for i in range(length):
                 ax.plot(norm[i], alpha=0.7)
                 legend.append(x_name[i])
-
+            print(legend)
             ax.legend(legend)
             st.pyplot(fig)
 
         elif(chart=='hist'):
-            for i in range(4):
+            for i in range(length):
                 ax.hist(norm[i], alpha=0.7)
                 legend.append(x_name[i])
             ax.legend(legend)
             st.pyplot(fig)
         else:
+            st.error("Chart type has not been selected. Please select a Chart type.")
             pass

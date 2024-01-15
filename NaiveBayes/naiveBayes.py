@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from collections import Counter
 import math
 from scipy.stats import norm
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from scipy.special import comb
 from stqdm import stqdm
 from time import sleep
@@ -18,9 +18,13 @@ from DatasetINFO.transposeDataset import transpose as ts
 
 def naive_bayes(iris_pd):
     print('start naive bayes ---------------------------------')
-    st.header("Naive Bayes with IRIS")
-    st.subheader("Split Dataset :scissors:", divider='blue')
+    st.header("What is Naive Bayes Clisifi? ::", divider='blue')
+    
+    st.subheader("Gaussian Naive Bayes")
 
+
+    st.header("Split Dataset :scissors:", divider='blue')
+    
     # split train, test
     variety=iris_pd.variety
     data=iris_pd.drop(columns='variety')    # 순수 데이터값만 출력
@@ -28,23 +32,34 @@ def naive_bayes(iris_pd):
     iris_pd['category']=iris_pd['variety'].factorize()[0]   # class를 .factorize()[0]로 숫자로 치환하여 'category' 컬럼에 추가
     category=iris_pd['category']
 
-    st.markdown("#### 데이터셋 분할")
-    st.markdown("분할한 train 데이터셋")
+    # st.markdown("##### 데이터셋 분할 및 class 순 정렬")
+    st.text("데이터셋 분할 비율 그래프 나타내기")
+    st.text("데이터셋 분할 옵션")
+
+    # 분할한 train 데이터셋
     data_train, data_test, variety_train, variety_test=train_test_split(
         data, category, test_size=0.2, stratify=category, random_state=1
         )
-    st.dataframe(data_train)
+    # st.dataframe(data_train)
     print('variety bincount : ',np.bincount(variety_train))     # 빈도수 세기
     newIris=pd.DataFrame(np.column_stack([data_train, variety_train]))
 
-    st.markdown("분할한 데이터셋을 클래스 순서로 정렬")
-    # sort and rearrange the data based on the variety
+    # sort and rearrange the data based on the variety : 분할한 데이터셋을 클래스 순서로 정렬
     setosa=newIris[newIris[4]==0]
     versicolor=newIris[newIris[4]==1]
     virginica=newIris[newIris[4]==2]
     newIris=pd.concat([setosa, versicolor, virginica])
-    st.dataframe(newIris)
+    newIris_df = pd.DataFrame({
+        'sepal.length':newIris[0], 
+        'sepal.width':newIris[1], 
+        'petal.length':newIris[2], 
+        'petal.width':newIris[3],
+        'variety':newIris[4]
+        })
+    st.dataframe(newIris_df)
 
+
+    st.header("Training Model ::", divider='blue')
     # split data based on variety
     setosa_data=newIris[0:40]
     versicolor_data=newIris[40:80]
@@ -67,7 +82,7 @@ def naive_bayes(iris_pd):
     x=[]
     likelihood=[]
 
-    for i in stqdm(range(len(newIris))):        # stqdm 완전 끝나면 로딩바 자체가 사라짐
+    for i in range(len(newIris)):        # stqdm 완전 끝나면 로딩바 자체가 사라짐
         # sleep(0.5)
         distribution=1
         if(i<40):                               #setosa
@@ -100,7 +115,7 @@ def naive_bayes(iris_pd):
     print('virginica_priori :', virginica_priori)
     print()
 
-
+    st.header("Testing Model ::", divider='blue')
     # rearrange the data into groups based on the variety
     print('test_data start-------------------------------')
     newTest = pd.DataFrame(np.column_stack([data_test, variety_test]))

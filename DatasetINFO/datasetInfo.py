@@ -21,19 +21,19 @@ def dataset_info(iris_pd):
 
     #show dataset info
     st.header('iris :violet[info]', divider='violet')
+    st.subheader("number of data")
+    iris_class = iris_pd.groupby('variety').count()
+    st.dataframe(iris_class)
+    st.markdown("class :3 / featrue :4 / total :600")
 
-    col1, col2 = st.columns([1, 2], gap="small")
-    with col1:  #show dataset class info
-        st.subheader("class info")
-        iris_class = iris_pd.groupby('variety')['variety'].count()
-        st.dataframe(data=iris_class)
-        st.subheader("null check")
-        st.dataframe(iris_pd.isnull().sum())
+    st.subheader("null check")
+    iris_nullck=pd.DataFrame(iris_pd.isnull().sum())
+    print(type(iris_nullck))
+    st.dataframe(iris_nullck.transpose())
 
-    with col2:  #show dataset describe
-        st.subheader('iris describe')
-        # print(iris_pd.describe())
-        st.dataframe(iris_pd.describe())
+    st.subheader('iris describe')
+    # print(iris_pd.describe())
+    st.dataframe(iris_pd.describe())
 
     # Graph
     c_list = ['Setosa', 'Versicolor', 'Virginica']                          #class name list
@@ -72,18 +72,24 @@ def dataset_info(iris_pd):
                     size=50
                 )
     
-    st.markdown('### sepal')
+    st.subheader('Scaacer Chart')
     setosa = iris_pd[iris_pd['variety']=='Setosa']
     versicolor = iris_pd[iris_pd['variety']=='Versicolor']
     virginica = iris_pd[iris_pd['variety']=='Virginica']
-    fig, (ax1, ax2) = plt.subplots(1,2)
+
+
+    fig, (ax1, ax2) = plt.subplots(2,1)
+    fig.set_figheight(10)
+
+    ax1.set_title("sepal")
+    ax1.legend(c_list)
+    ax2.set_title("petal")
+    ax2.legend(f_list)
+
     ax1.scatter(setosa['sepal.width'],setosa['sepal.length'])
     ax1.scatter(versicolor['sepal.width'],versicolor['sepal.length'])
     ax1.scatter(virginica['sepal.width'],virginica['sepal.length'])
-    # st.pyplot(fig)
 
-    st.markdown('### petal')
-    # fig, ax = plt.subplots()
     ax2.scatter(setosa['petal.width'],setosa['petal.length'])
     ax2.scatter(versicolor['petal.width'],versicolor['petal.length'])
     ax2.scatter(virginica['petal.width'],virginica['petal.length'])
@@ -126,4 +132,11 @@ def dataset_info(iris_pd):
         'select a feature',
         (f_list)
     )
-    norm.by_feature(c_list, select_feature, select_chart_type)
+    np_data = norm.by_feature(c_list, select_feature)
+    norm.show_chart(
+        'feature', 
+        np_data, 
+        c_list, 
+        select_feature, 
+        select_chart_type
+        )
