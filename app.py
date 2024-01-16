@@ -10,6 +10,9 @@ from NaiveBayes import naiveBayes as nb
 fi = Image.open("image/iris.png")
 def main():
     print('=============================start stremlit')
+    # if 'user_menu' not in st.session_state: # 선택했던 메뉴 저장 state 생성 및 초기화
+    #     st.session_state['user_menu'] = ''
+    # check_reload=1
     st.set_page_config(
         page_title="Analyzing iris data",
         page_icon=fi
@@ -19,7 +22,7 @@ def main():
     # st.image('image/iris.png', width=50)
     print('read datset --------------------------')
     iris_pd = pd.read_csv("dataset/iris.csv")
-
+    print(iris_pd.head(),'\n')
     with st.sidebar:
         select_menu=option_menu(
             "Menu",
@@ -35,11 +38,21 @@ def main():
             }
         )
     
+    print('select menu :', select_menu)
+    
+    
+    # 메뉴 선택 후 보여줄 페이지
+    # print(st.session_state['user_menu'])
     if(select_menu=="Dataset INFO"):
-        di.dataset_info(iris_pd)                    
+        print()
+        di.dataset_info(iris_pd) 
+
     elif(select_menu=="Naive Bayes"):
+        print()
         nb.naive_bayes(iris_pd)
 
+    
+    
     
 
 if __name__=='__main__':
