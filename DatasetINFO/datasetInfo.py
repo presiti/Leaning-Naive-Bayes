@@ -35,19 +35,18 @@ def dataset_info(iris_pd):
     # print(iris_pd.describe())
     st.dataframe(iris_pd.describe())
 
+
     # Graph
     c_list = ['Setosa', 'Versicolor', 'Virginica']                          #class name list
     f_list = [iris_pd.columns[i] for i in range(4)]                         #feature name list
-
-    #show Scatter chart
-    st.subheader('iris :blue[scatter chart]', divider='blue')
-
-    
 
     # 데이터셋 변환
     iris_trans=td.transpose(iris_pd, c_list, f_list)
     st.dataframe(iris_trans)
     
+    #show Scatter chart
+    st.subheader('iris :blue[scatter chart]', divider='blue')
+
     scatter_1 = st.toggle('show sactter version 1')
     if scatter_1:
         s1, s2= st.columns([0.5,0.5])

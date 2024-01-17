@@ -14,19 +14,108 @@ from DatasetINFO.transposeDataset import transpose as ts
 
 def naive_bayes(iris_pd):
     print('start naive bayes ---------------------------------')
-    st.header("What is Naive Bayes Clisifi? :speech_balloon:", divider='blue')
-    st.text("1.간단 예시 설명+Bayes 유래+그림자료 필요")
-    st.text("2.특징 나열 + 장단점")
-    st.text("3.각 요소 상세 설명")
-    st.text("4.왜 Naive 인지")
-    st.text("5.종류 간략 설명")
-    st.text("6.가우시안 간단 설명")
-    st.latex(r'''P(A|B)=\frac{P(B|A)P(A)}{P(B)}''')
+    # st.header("What is Naive Bayes? :speech_balloon:", divider='blue')
+    # st.text("1.간단 예시 설명+Bayes 유래+그림자료 필요")
+    st.text_area("Overview",
+                 "Naive Bayes는 유명한 분류 알고리즘으로 확률 이론의 베이즈 정리를 기반으로 만들어졌어요. "
+                 "때문에 이름에도 Bayes가 들어가 있습니다. "
+                 "이 알고리즘은 스팸 메일 분류부터 시작하여 감정분석 등 광범위하게 사용돼요.  "
+                 "대표적으로 넷플릭스의 추천 알고리즘도 이 알고리즘이 사용됐어요. "
+                 )
+    st.image('image/naivebayes.jpg')
+    
+    # st.markdown('''
+    #             ##### 확률
+    #             어떠한 사건 A가 일어날 확률을 표기할 때 **P(A)** 라 해요.
+    #             사건A를 주사위를 던졌을 때 3이 나오는 사건이라면 1/6의 확률을 가지기 때문에
+    #             아래와 같이 표기해요.
+    #             ''')
+    # st.latex(r'''P(A)=\frac{1}{6}''')
+    # st.markdown('''
+    #             ##### 조건부 확률
+    #             Naive Bayes는 **조건부 확률**을 이용해 데이터를 분류해요. 
+    #             '비가 올때 튀김류 요리 매출이 오를 확률' 또는 '주사위 두개 중 하나가 3이 나온 후 다른 하나가 2가 나올 확률'과 같이 
+    #             사건 A가 일어난 후 사건 B가 일어날 확률을 의미하며 아래와 같이 표기해요.
+    #             ''')
+    # st.latex(r'''P(B|A)''')
 
-    st.subheader("Gaussian Naive Bayes")
+    # 각 요소 상세 설명
+    st.latex(r'''사후확률=\frac{우도\times 사전확률}{주변 우도}''')
+    st.markdown('''
+                ###### P(A):사전확률(Priori)
+                사후확률을 구할 때 사건 B가 일어나기 전의 확률이라서 사전 확률이라고 해요.  
+                다시 말해 데이터가 어디로 분류될지 즉, 어느 특정 class 하나로 data가 분류될 확률이에요.  
+                Iris dataset으로는 아래와 같이 표기할 수 있어요.
+                ''')
+    st.latex(r'''
+            \frac{클래스별 데이터 개수}{전체 데이터 개수}=\frac{200}{600}=\frac{1}{3}=P(class)
+            ''')
+    st.markdown('''
+                ###### P(B|A):우도함수(likelihood)
+                가능도라 부르기도 하며 우리가 이미 알고 있는 관측값에 대해 
+                실제값과 얼마나 일관되는지 그 정도를 구하는 함수를 말해요.  
+                우리가 가지고 있는 dataset을 통해 분류할 데이터가 어떤 class의 값일지 class를 고정해두고 
+                확률을 구해보는 것과 비슷해요.
+                ''')
+    st.latex(r'''
+            P(data|class)
+            ''')
+    st.markdown('''            
+                ###### P(A|B):사후확률(evidence)
+                사건 A가 일어난 후에 사건 B가 일어날 확률을 말해요. 
+                Naive Bayes의 분류 기준이자 얼마나 일관성 있게 판단했는지를 나타내요. 
+                사후 확률은 데이터를 분류할 때, 분류할 목록들 각각 구해서 비교 후 가장 높은 항목으로 분류해요.
+                ''')
+    st.latex(r'''
+            P(class|data)
+            ''')
+    # 왜 Naive 인지
+    st.markdown('''
+                Naive Bayes는 데이터를 분류할 때 영향을 미치는 모든 조건들이 독립적이라고 가정해요.
+                실제로는 다양한 조건들이 서로 연관 되어 있지만 이를 단순하게 여기고 계산한다고 
+                순진(Naive)하다고 해서 앞에 Naive가 붙었어요. 
+                ''')
+    # 특징 나열 + 장단점
+    st.markdown('''
+                ##### 장점  
+                + 빠르고 간단하여 효율적임  
+                    : 단순한 구조로 되어 있으며 입력받는 데이터 종류 사이의 독립성을 가정하고 있어서 
+                    모델을 이해하고 만들기 쉬워요.    
+                 
+                + 신뢰도 제공  
+                    : Naive Bayes는 사후확률을 구하여 분류하는데 이 값은 모델이 예측값에 
+                    대해 확신하는 정도를 보여줘요. 이를 활용하여 모델이 에측을 잘 수행하는지를 표현하는 
+                    중요한 지표로 활용 될 수 있어요.
+                + 데이터 크기에 상관 없이 잘 작동함  
+                    : 모델이 간단하고 독립성을 가정하기 때문에, 다른 복잡한 모델들보다 적은 양의 훈련 데이터로도 좋은 성능을 낼 수 있어요.
+                + 이진 및 다중 분류에도 사용 가능  
+                    : 다양한 상황에 유연하게 적용될 수 있어요.
+                + 노이즈와 누락 데이터를 잘 처리
+                  
+                ##### 단점  
+                - 모든 특징이 동등하게 중요  
+                    : 데이터 특징들 간의 가중치를 고려하지 않아서 실제 중요한 데이터 또는 중요하지 않는 데이터도 동등하게 다뤄 
+                    정확하지 못한 예측을 할 수 있어요.
+                - 독립이라는 가정이 잘못된 경우 
+                    : 현실에서는 변수들이 항상 독립적이지 않을 수 있습니다. 이 가정이 성립하지 않는 경우 
+                    모델의 성능이 저하될 수 있어요.
+                - 0 확률
+                    : 훈련 데이터에서 특정 클래스에 대한 특정 데이터의 값이 전혀 나타나지 않으면, 해당 변수에 대한
+                    확률이 0이 되어 모델이 예측할 때 문제를 일으킬 수 있어요.
+                - 선형 분리 불가능
+                    : 클래스들을 구분할 때 복잡한 경계를 가지면 성능이 저하될 수 있어요.
+                ''')
+    st.markdown('''
+                #### Guassian Naive Bayes
+                ''')
+    st.image('image/gaussian.jpg')
+    st.markdown('''
+                Naive Bayes의 여러 종류 중 Gaussian Naive Bayes는 데이터가 iris 데이터와 같이 
+                연속적인 수로 수량화가 가능한 데이터일 때 정규 분포를 따른다는 가정에서 적용해요.
+                ''')
 
 
-    st.header("Workflow")
+    st.header("Workflow", divider='blue')
     st.image('image/workflow_eng.jpg')
     st.latex(r'''P(class|data)=\frac{P(data|class)\times P(class)}{P(data)}''')
 
@@ -159,7 +248,11 @@ def naive_bayes(iris_pd):
 
     # 학습 데이터 셋에서 우도 찾기
     st.subheader('find train likeilhood')
-    st.latex(r'''P(train|class)''')
+    st.text('Gaussian Naive Bayes - likeilhood')
+    st.latex(r'''
+            P(train|class)=f(x_i|y)=\frac{1}{\sqrt{2 \pi \sigma_y^2}}
+             \exp(-\frac{(x_i- \mu_y)^2}{2 \sigma_y^2})
+            ''')
     st.code('''
             a = ((x[j]-mean[j])**2)/(2*std[j]**2)       # x :train data
             b = math.sqrt(2*math.pi*(std[j]**2))
@@ -191,9 +284,17 @@ def naive_bayes(iris_pd):
             distribution=distribution*y
         likelihood.append(distribution) # 우도 값 넣기
         x=[]
-    st.text("클래스별로 column 재구성해서 보여주기-현상황 최선")
-    st.text("가능하면 사후확률 구하기")
-    st.dataframe(likelihood)
+    #가능하면 사후확률 구하기
+    
+    setosa_likelihood=likelihood[0:40]
+    versicolor_likelihood=likelihood[40:80]
+    virginica_likelihood=likelihood[80:120]
+    train_likelihood=pd.DataFrame({
+        'Setosa':setosa_likelihood, 
+        'Versicolor':versicolor_likelihood, 
+        'Virginica':virginica_likelihood})
+    st.dataframe(train_likelihood)      # 클래스별로 column 재구성해서 보여주기
+    
     on_train=st.toggle("Veiw training code")
     code_train='''
         likelihood=[]
@@ -349,8 +450,7 @@ def naive_bayes(iris_pd):
     print(posteriorVariety)
     print()
     
-    st.subheader("Performance evaluation")
-    st.text("정확도, f1 score 묶어서 보여주기")
+    st.header("Model evaluation", divider='blue')
 
     # Accuarcy
     similar=0
@@ -359,14 +459,21 @@ def naive_bayes(iris_pd):
             similar += 1
     accuarcy=similar/(i+1)*100
 
+    # 정확도, f1 score 묶어서 보여주기
     print('accuarcy : ',accuarcy)
-    # print('f1_score : ', f1_score())
+    # macro : 각 라벨에 대한 f1-score 평균값. 모든 라벨 동등 조건으로 보는 naive bayes라 선택
+    f1 = f1_score(posteriorVariety, variety_test, average='macro')
+    print('f1_score : ', f1)
+    st.dataframe({
+        'accuarcy':accuarcy,
+        'f1_score':f1
+    })
 
     # fig, ax = plt.subplots()
     # for i in range(len(posteriorVariety)):
     #     ax.plot(variety_test[i])
     #     ax.plot(posteriorVariety[i])
-    fig1, ax1=plt.subplots(figsize=(5,4))
+    fig1, ax1=plt.subplots(figsize=(3,2.5))
     cm = confusion_matrix(posteriorVariety, variety_test)
     print('confusion matrix')
     print(cm)
@@ -375,5 +482,6 @@ def naive_bayes(iris_pd):
         annot=True, # 히트맵 각 항목의 숫자 표시 여부
         cmap='BuPu', # 색 테마 선택
     )
+    ax1.set_title("Confusion matrix")
     ax1.set(xlabel="test", ylabel="true")
     st.pyplot(fig1)
